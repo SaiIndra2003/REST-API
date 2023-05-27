@@ -7,6 +7,7 @@ router.get("/:orderID", (req, res, next) => {
   const id = req.params.orderID;
   Order.findById(id)
     .select("_id product quantity")
+    .populate("product", "_id name price")
     .exec()
     .then((doc) => {
       if (!doc) {

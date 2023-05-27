@@ -9,6 +9,7 @@ const Product = require("../models/product");
 router.get("/", (req, res, next) => {
   Order.find()
     .select("product quantity _id")
+    .populate("product", "name") //Used for properties which are refered to other collection which returns the products corr to id
     .exec()
     .then((docs) => {
       res.status(201).json({
