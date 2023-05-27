@@ -4,10 +4,8 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-
 const productsRoute = require("./api/routes/product");
 const ordersRoute = require("./api/routes/orders");
-
 
 const uri = process.env.MONGODB;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -15,13 +13,9 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch((error) => {console.error('Failed to connect to MongoDB Atlas', error);});
 
 
-
-
 const app = express();
-// app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
@@ -39,9 +33,7 @@ app.use((req,res,next)=>{ //We would set the header of response (Server) here so
 app.use("/products",productsRoute);
 app.use("/orders",ordersRoute)
 
-app.get("/",(req,res,next)=>{
-    console.log(req.ip);
-})
+
 
 app.use((req,res,next)=>{
     const error = new Error('Not found');
