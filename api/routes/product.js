@@ -63,7 +63,12 @@ router.get("/:productID", async (req, res, next) => {
 router.patch("/:productID", (req, res, next) => {
   const id = req.params.productID;
   const product = req.body;
-  Product.findByIdAndUpdate(id, product)
+  //   const prods = {}
+  //   for(const ops of req.body){
+  //     prods[ops.propName] = ops[value];
+  //   }
+  // Use the commented one if you wish to patch only if all the attributes are given (put method basically)
+  Product.findByIdAndUpdate(id, { $set: product })
     .exec()
     .then((result) => {
       res.status(200).json({
@@ -71,7 +76,9 @@ router.patch("/:productID", (req, res, next) => {
         result,
       });
     })
-    .catch();
+    .catch((err) => {
+      res.status(404).json(err);
+    });
 });
 
 router.delete("/:productID", (req, res, next) => {
