@@ -7,10 +7,24 @@ const singleProductRoute = require("./singleProduct");
 
 router.get("/", (req, res, next) => {
   Product.find()
+    .select("name price _id")
     .exec()
     .then((docs) => {
-      console.log(docs);
-      res.status(200).json(docs);
+      const response = {
+        count: docs.length,
+        products: docs.map((doc) => {
+          return {
+            name: doc.name,
+            price: doc.price,
+            id: doc._id,
+            request: {
+              type: "GET",
+              url: "http://localhost:3000/products/" + doc._id,
+            },
+          };
+        }),
+      };
+      res.status(200).json(response);
     })
     .catch((err) => {
       console.log(err);
@@ -30,9 +44,17 @@ router.post("/", (req, res, next) => {
     .save()
     .then((result) => {
       console.log(result);
-      res.status(200).json({
-        message: "New product created",
-        createdProduct: product,
+      res.status(201).json({
+        message: "Created a product successfully",
+        createdProduct: {
+          name: result.name,
+          price: result.price,
+          id: result._id,
+          request: {
+            type: "GET",
+            url: "http://localhost:300/products/" + res._id,
+          },
+        },
       });
     })
     .catch((err) => {

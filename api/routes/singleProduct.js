@@ -6,11 +6,19 @@ const Product = require("../models/product");
 router.get("/:productID", async (req, res, next) => {
   const id = req.params.productID;
   Product.findById(id)
+    .select("name price _id")
     .exec()
     .then((doc) => {
       console.log("From Data base... ", doc);
       if (doc) {
-        res.status(200).json(doc);
+        res.status(201).json({
+          product: doc,
+          request: {
+            type: "GET",
+            description: "GET_ALL_PRODUCTS",
+            url: "http://localhost:3000/products",
+          },
+        });
       } else {
         res.status(404).json({ message: "No valid entry with provided id" });
       }
@@ -27,7 +35,14 @@ router.patch("/:productID", (req, res, next) => {
   Product.findByIdAndUpdate(id, { $set: product })
     .exec()
     .then((result) => {
-      res.status(200).json(result);
+      res.status(201).json({
+        message: "Products updated succesfully",
+        request: {
+          type: "GET",
+          description: "GET-PRODUCT",
+          url: "http://localhost:3000/products/" + id,
+        },
+      });
     })
     .catch((err) => {
       res.status(404).json(err);
@@ -39,8 +54,14 @@ router.delete("/:productID", (req, res, next) => {
   Product.findByIdAndDelete(id)
     .exec()
     .then((result) => {
-      res.status(200).json({
-        message: "Deleted succesfully",
+      res.status(201).json({
+        message: "Product deleted succesfully",
+        request: {
+          type: "POST",
+          url: "http://localhost:3000/products/",
+          description: "ADD_NEW_PRODUCT",
+          body: { name: "String", price: "Number" },
+        },
       });
     })
     .catch((err) => {
@@ -48,7 +69,5 @@ router.delete("/:productID", (req, res, next) => {
       res.status(500).json({ error: err });
     });
 });
-
-
 
 module.exports = router;
