@@ -6,7 +6,7 @@ const Product = require("../models/product");
 router.get("/:productID", async (req, res, next) => {
   const id = req.params.productID;
   Product.findById(id)
-    .select("name price _id")
+    .select("name price _id productImage")
     .exec()
     .then((doc) => {
       console.log("From Data base... ", doc);
