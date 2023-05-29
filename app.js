@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const productsRoute = require("./api/routes/product");
 const ordersRoute = require("./api/routes/orders");
+const userRoute = require("./api/routes/user");
 
 const uri = process.env.MONGODB;
 mongoose
@@ -19,7 +20,7 @@ mongoose
 
 const app = express();
 app.use(morgan("dev"));
-app.use("/uploads",express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
 
 app.use("/products", productsRoute);
 app.use("/orders", ordersRoute);
+app.use("/user", userRoute);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
