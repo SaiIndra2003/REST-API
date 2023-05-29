@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const Order = require("../models/order");
+const checkAuth = require("../middleware/check_auth");
 
-router.get("/:orderID", (req, res, next) => {
+router.get("/:orderID", checkAuth, (req, res, next) => {
   const id = req.params.orderID;
   Order.findById(id)
     .select("_id product quantity")
@@ -29,7 +30,7 @@ router.get("/:orderID", (req, res, next) => {
     });
 });
 
-router.patch("/:orderID", (req, res, next) => {
+router.patch("/:orderID", checkAuth, (req, res, next) => {
   const id = req.params.orderID;
   Order.findByIdAndUpdate(id, { $set: req.body })
     .then((result) => {
@@ -49,7 +50,7 @@ router.patch("/:orderID", (req, res, next) => {
     });
 });
 
-router.delete("/:orderID", (req, res, next) => {
+router.delete("/:orderID", checkAuth, (req, res, next) => {
   const id = req.params.orderID;
   Order.findByIdAndDelete(id)
     .exec()

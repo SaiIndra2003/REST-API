@@ -5,8 +5,9 @@ const mongoose = require("mongoose");
 const singleOrderRoute = require("./singleOrder");
 const Order = require("../models/order");
 const Product = require("../models/product");
+const checkAuth = require("../middleware/check_auth");
 
-router.get("/", (req, res, next) => {
+router.get("/", checkAuth, (req, res, next) => {
   Order.find()
     .select("product quantity _id")
     .populate("product", "name") //Used for properties which are refered to other collection which returns the products corr to id
@@ -34,7 +35,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", checkAuth, (req, res, next) => {
   Product.findById(req.body.productId)
     .then((product) => {
       if (!product) {

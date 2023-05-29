@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const Product = require("../models/product");
+const checkAuth = require("../middleware/check_auth");
 
-router.get("/:productID", async (req, res, next) => {
+router.get("/:productID", checkAuth, async (req, res, next) => {
   const id = req.params.productID;
   Product.findById(id)
     .select("name price _id productImage")
@@ -29,7 +30,7 @@ router.get("/:productID", async (req, res, next) => {
     });
 });
 
-router.patch("/:productID", (req, res, next) => {
+router.patch("/:productID", checkAuth, (req, res, next) => {
   const id = req.params.productID;
   const product = req.body;
   Product.findByIdAndUpdate(id, { $set: product })
@@ -49,7 +50,7 @@ router.patch("/:productID", (req, res, next) => {
     });
 });
 
-router.delete("/:productID", (req, res, next) => {
+router.delete("/:productID", checkAuth, (req, res, next) => {
   const id = req.params.productID;
   Product.findByIdAndDelete(id)
     .exec()

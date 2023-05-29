@@ -6,6 +6,7 @@ const path = require("path");
 
 const Product = require("../models/product");
 const singleProductRoute = require("./singleProduct");
+const checkAuth = require("../middleware/check_auth");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,6 +18,7 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + file.originalname);
   },
 });
+
 const fileFilter = (req, file, cb) => {
   // reject a file
   if (
@@ -38,7 +40,7 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-router.get("/", (req, res, next) => {
+router.get("/", checkAuth, (req, res, next) => {
   Product.find()
     .select("name price _id productImage")
     .exec()
@@ -47,7 +49,10 @@ router.get("/", (req, res, next) => {
         count: docs.length,
         products: docs.map((doc) => {
           return {
-            ...doc,
+            _id: doc._id,
+            name: doc.name,
+            price: doc.price,
+            productImage: doc.productImage,
             request: {
               type: "GET",
               url: "http://localhost:3000/products/" + doc._id,
@@ -65,7 +70,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("productImage"), (req, res, next) => {
+router.post("/", checkAuth, upload.single("productImage"), (req, res, next) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -84,7 +89,7 @@ router.post("/", upload.single("productImage"), (req, res, next) => {
           id: result._id,
           request: {
             type: "GET",
-            url: "http://localhost:300/products/" + res._id,
+            url: "http://localhost:300/products/" + result._id,
           },
         },
       });
